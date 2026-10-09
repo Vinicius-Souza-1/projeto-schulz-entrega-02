@@ -1,0 +1,15 @@
+# Banco local gerado durante a execução
+*.db
+*.db-*
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+
+# Ambiente virtual
+.venv/
+venv/
+
+# Arquivos temporários do Word
+~$*.docx
+.~lock.*
