@@ -3,7 +3,10 @@
 Trabalho acadêmico da unidade curricular Projeto Aplicado I,
 do curso de Análise e Desenvolvimento de Sistemas do SENAI.
 
-Autor: Vinicius Itamar de Souza.
+Autores:
+- Victor Gabriel Jaeger
+- Vinicius de Assis Mendes
+- Vinícius Itamar de Souza
 
 ## Objetivo
 
