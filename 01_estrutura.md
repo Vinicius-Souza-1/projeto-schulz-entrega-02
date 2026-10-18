@@ -1,46 +1,53 @@
-# Organização dos dados do projeto Schulz
+# Estrutura do Banco de Dados — Schulz
+
+## Identificação
+- Unidade curricular: Projeto Aplicado I.
+- Atividade: Entrega 02 — Modelagem de Banco de Dados.
+- Integrantes: Victor Gabriel Jaeger, Vinicius de Assis Mendes e Vinícius Itamar de Souza.
+- Professores: Hugo Menezes Barra e Rodrigo Losina.
 
 ## Objetivo
-O banco de dados será utilizado para organizar os dados das medições dos equipamentos.
-A proposta é facilitar as consultas e reduzir a repetição de cadastros.
-O modelo terá três tabelas: responsaveis, equipamentos e medicoes.
+Organizar os cadastros de técnicos, equipamentos e medições em um banco SQLite.
+Essa organização busca reduzir a repetição de informações presentes nas planilhas.
+O banco também permite relacionar cada medição ao equipamento e ao técnico responsável.
 
-## Técnico e solicitante: tabela responsaveis
-Esta tabela guardará os dados de quem realiza ou solicita a medição.
-Cada responsável terá um identificador, um código e um nome.
-O cadastro indicará se o responsável é uma pessoa ou um setor.
-O técnico será uma pessoa responsável pela realização da medição.
-O solicitante poderá ser uma pessoa ou um setor que pediu o serviço.
-Uma pessoa poderá atuar como técnico e solicitante sem precisar de dois cadastros.
-A função de cada responsável será indicada no registro da medição.
+## Tabela tecnico
+Armazena o nome, a matrícula, o e-mail e o setor do técnico.
+O campo id_tecnico identifica cada cadastro e é gerado automaticamente.
+A matrícula é obrigatória e não pode ser repetida.
+Um técnico pode estar relacionado a várias medições.
 
-## Equipamento: tabela equipamentos
-Esta tabela guardará os dados do equipamento que será calibrado.
-Cada equipamento terá um identificador e um código único.
-Também poderão ser registrados descrição, fabricante, modelo e número de série.
-O mesmo equipamento poderá estar relacionado a várias medições.
-Seus dados serão cadastrados uma vez e utilizados nas próximas medições.
+## Tabela equipamento
+Armazena o código de identificação, o nome, o fabricante e o modelo do equipamento.
+O campo id_equipamento identifica cada equipamento e é gerado automaticamente.
+O campo codigo_tag é obrigatório e não pode ser repetido.
+Um equipamento pode estar relacionado a várias medições.
 
-## Medição: tabela medicoes
-Esta tabela guardará cada leitura realizada durante a calibração.
-Cada registro será ligado a um equipamento, a um técnico e a um solicitante.
-Serão registrados o parâmetro, a unidade, o valor nominal e as tolerâncias.
-Também serão armazenados o valor obtido, a data e o status da medição.
-O código da calibração permitirá agrupar as leituras do mesmo atendimento.
-O número da sequência distinguirá as leituras repetidas de uma característica.
-Duas leituras com valores iguais poderão ser mantidas quando forem repetições válidas.
-O arquivo de origem e a localização do dado ajudarão na conferência das informações.
+## Tabela medicao
+Armazena o parâmetro medido, o valor nominal, as tolerâncias e o valor obtido.
+Também registra o resultado e a data da medição.
+O campo id_medicao identifica cada registro e é gerado automaticamente.
+Cada medição deve estar vinculada a um equipamento e a um técnico cadastrados.
+O resultado aceita somente APROVADO ou REPROVADO.
+O banco valida essas opções, mas não calcula automaticamente o resultado.
+Quando a data é omitida, o SQLite registra a data e a hora atuais em UTC.
 
-## Relacionamentos e prevenção de duplicidades
-A chave primária será o identificador único de cada registro.
-As chaves estrangeiras ligarão a medição aos cadastros de equipamento e responsáveis.
-Um equipamento poderá ter várias medições, mas cada medição terá apenas um equipamento.
-Um responsável poderá participar de várias medições como técnico ou solicitante.
-Os códigos únicos ajudarão a evitar cadastros repetidos de equipamentos e responsáveis.
-A combinação de equipamento, calibração, característica e sequência evitará leituras duplicadas.
+## Relacionamentos
+A tabela medicao utiliza id_tecnico para identificar o responsável pela medição.
+Ela também utiliza id_equipamento para identificar o equipamento medido.
+Esses campos são chaves estrangeiras e apontam para os respectivos cadastros.
+A exclusão de um técnico ou equipamento com medições vinculadas é bloqueada.
 
-## Limite desta proposta
-O modelo foi organizado em três tabelas para atender à atividade.
-Alguns dados da calibração serão repetidos nas linhas de medição.
-O programa deverá verificar se esses dados permanecem iguais dentro da mesma calibração.
-Em uma ampliação futura, a calibração poderá ter uma tabela própria.
+## Controle de duplicidade
+A matrícula única impede dois técnicos cadastrados com a mesma matrícula.
+O código único impede dois equipamentos cadastrados com o mesmo codigo_tag.
+Os cadastros são reutilizados nas medições por meio de seus identificadores.
+Isso evita repetir todos os dados do técnico e do equipamento a cada medição.
+O identificador da medição é único, mas não impede repetir seu conteúdo.
+O controle de reimportação de uma mesma medição deverá ser definido na aplicação.
+
+## Limites desta etapa
+O modelo possui três tabelas e vinte campos.
+Esta entrega cria a estrutura do banco, sem inserir dados das planilhas.
+A importação, a higienização e o cálculo dos resultados ainda não estão implementados.
+A geração de certificados também será tratada em uma etapa posterior.
